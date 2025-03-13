@@ -13,3 +13,5 @@
 #    * Outer stop: The dark gray color chosen for the square (e.g., #333333).
 # 7. Adjust the gradient handles in the document to ensure the gradient is subtle and visually appealing. The goal is to add depth, not a strong color change.
 # 8. Remove any stroke/border from the square.
+
+# PNG Export functionality - This part will be implemented later as this code is not for code generation.
