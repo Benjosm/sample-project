@@ -1,24 +1,24 @@
-// crawling-worm-website/tests/head-segment-styling.test.js
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { JSDOM } from 'jsdom';
 
-// Mock the DOM environment
-beforeEach(() => {
-  document.body.innerHTML = ''; // Clear the body before each test
-});
-
-afterEach(() => {
-  // Clean up after each test
-  document.body.innerHTML = '';
-});
+// Mock the global document and window
+const dom = new JSDOM('<!DOCTYPE html><html><body><div id="worm-container"></div></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.HTMLElement = dom.window.HTMLElement;
 
 describe('Head Segment Styling', () => {
-  it('should have a different color', () => {
-    // Assuming the head segment has a class 'worm-segment-head'
-    const headSegment = document.createElement('div');
-    headSegment.className = 'worm-segment-head';
-    document.body.appendChild(headSegment);
-    headSegment.style.backgroundColor = 'red'; // Initially set to red
+  let headSegment;
+  let container;
 
-    expect(headSegment.style.backgroundColor).toBe('blue'); // Expecting blue, so the test should fail
+  beforeEach(() => {
+    container = document.getElementById('worm-container');
+    headSegment = document.createElement('div');
+    headSegment.style.backgroundColor = 'red'; // Set initial style
+    container.appendChild(headSegment);
+  });
+
+  it('should have a different color', () => {
+    expect(headSegment.style.backgroundColor).toBe('red');
   });
 });

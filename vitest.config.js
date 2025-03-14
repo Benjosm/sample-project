@@ -1,14 +1,8 @@
-import { defineConfig } from 'vitest/config';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    include: ['crawling-worm-website/tests/**/*.test.js'],
     globals: true,
-    environment: 'jsdom'
+    environment: 'happy-dom'
   },
 });

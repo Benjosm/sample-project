@@ -1,135 +1,73 @@
-// crawling-worm-website/tests/initial-positioning.test.js
-import { expect, test } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
+import * as fs from 'node:fs';
+import { JSDOM } from 'jsdom';
 
-// Mock the document and its methods
-global.document = {
-  body: {
-    innerHTML: '',
-    appendChild: (child) => {
-      global.document.body.innerHTML += child.outerHTML;
-    }
-  },
-  createElement: (tagName) => {
-    if (tagName === 'div') {
-      return {
-        style: {},
-        outerHTML: ''
-      };
-    }
-    return null;
-  },
-  querySelector: (selector) => {
-    if (selector === '#worm-container') {
-      return {
-        style: {},
-        innerHTML: ''
-      };
-    }
-    return null;
-  },
-  querySelectorAll: (selector) => {
-    if (selector === '.worm-segment') {
-      return []; // Initially no segments
-    }
-    return [];
-  },
-  addEventListener: () => {},
-};
+// Mock the global document and window
+const dom = new JSDOM('<!DOCTYPE html><html><body><div id="worm-container"></div></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.HTMLElement = dom.window.HTMLElement;
 
-global.window = {
-  innerWidth: 1024,
-  innerHeight: 768,
-  addEventListener: () => {}
-};
 
-// Mock the script.js module
-const script = {
-  initializeWorm: () => {
-    // Simulate adding worm segments to the DOM
-    const container = document.querySelector('#worm-container');
-    if (container) {
-      for (let i = 0; i < 3; i++) {
-        const segment = document.createElement('div');
-        segment.className = 'worm-segment';
-        segment.style.position = 'absolute';
-        segment.style.left = `${i * 20}px`; // Example positioning
-        segment.style.top = '10px';
-        container.appendChild(segment);
-      }
-    }
+function initializeWorm(container, segmentCount = 5) {
+  for (let i = 0; i < segmentCount; i++) {
+    const segment = document.createElement('div');
+    segment.style.width = '20px';
+    segment.style.height = '20px';
+    segment.style.backgroundColor = 'green';
+    segment.style.position = 'absolute';
+    segment.style.left = `${i * 20}px`; // Example positioning
+    segment.style.top = '10px';
+    container.appendChild(segment);
   }
-};
+}
 
-test('worm segments are initially visible within the viewport', () => {
-  // Mock the worm container
-  document.body.innerHTML = '<div id="worm-container"></div>';
-  script.initializeWorm(); // Assuming a function like this exists in script.js
-  // Assuming segments are added to the DOM during script execution
-  const segments = document.querySelectorAll('.worm-segment');
-  expect(segments.length).toBeGreaterThan(0);
+describe('initial positioning', () => {
+  let container;
 
-  segments.forEach(segment => {
-    expect(segment.style.position).toBeDefined(); // Check if position is set
-    expect(segment.style.left).toBeDefined(); // Check if left is set
-    expect(segment.style.top).toBeDefined(); // Check if top is set
+  beforeEach(() => {
+    container = document.getElementById('worm-container');
+    container.innerHTML = ''; // Clear any existing content
   });
-});
 
-test('worm segments are positioned in a horizontal line or simple curve', () => {
-  // Mock the worm container
-  document.body.innerHTML = '<div id="worm-container"></div>';
-  script.initializeWorm(); // Assuming a function like this exists in script.js
-  // This test is more complex and depends on the specific initialization.
-  // Requires knowledge about worm segment positions after initialization.
-  script.initializeWorm();
-  const segments = document.querySelectorAll('.worm-segment');
+  it('worm segments are initially visible within the viewport', () => {
+    initializeWorm(container);
+    const segments = container.children;
+    for (let i = 0; i < segments.length; i++) {
+      expect(segments[i].style.display).not.toBe('none');
+    }
+  });
 
-  if (segments.length > 1) {
-    let previousSegment = null;
-    let allHorizontal = true;
-    segments.forEach(segment => {
-      if (previousSegment) {
-        const prevLeft = parseFloat(previousSegment.style.left);
-        const currLeft = parseFloat(segment.style.left);
-        const prevTop = parseFloat(previousSegment.style.top);
-        const currTop = parseFloat(segment.style.top);
-        
-        if (Math.abs(prevTop - currTop) > 10) {
-          allHorizontal = false;
-        }
-        
-      }
-      previousSegment = segment;
+  it('worm segments are positioned in a horizontal line or simple curve', () => {
+    initializeWorm(container);
+    const segments = container.children;
+    for (let i = 0; i < segments.length; i++) {
+      expect(segments[i].style.position).toBe('absolute');
+      expect(parseInt(segments[i].style.left, 10)).toBe(i * 20);
+    }
+  });
+
+  it('CSS or JavaScript is used to set the initial position', () => {
+    initializeWorm(container);
+    const segments = container.children;
+    for (let i = 0; i < segments.length; i++) {
+      expect(segments[i].style.left).not.toBe('');
+      expect(segments[i].style.top).not.toBe('');
+    }
+  });
+
+  it('different viewport sizes are considered', () => {
+    // Mock viewport size (example)
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      value: 800
     });
-    expect(allHorizontal).toBe(true);
-  }
-});
-
-test('CSS or JavaScript is used to set the initial position', () => {
-    // Mock the worm container
-    document.body.innerHTML = '<div id="worm-container"></div>';
-    script.initializeWorm(); // Assuming a function like this exists in script.js
-    // Verify that the worm is positioned using css or javascript
-    const segments = document.querySelectorAll('.worm-segment');
-    segments.forEach(segment => {
-        expect(segment.style.position).not.toBe("");
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      value: 600
     });
-});
-
-test('different viewport sizes are considered', () => {
-    // Mock the worm container
-    document.body.innerHTML = '<div id="worm-container"></div>';
-    script.initializeWorm(); // Assuming a function like this exists in script.js
-    // Test with a smaller viewport
-    global.window.innerWidth = 480;
-    global.window.innerHeight = 320;
-    // Re-initialize or re-render the worm
-    script.initializeWorm();
-    // Check if the worm is still visible
-    const segments = document.querySelectorAll('.worm-segment');
-    expect(segments.length).toBeGreaterThan(0);
-
-    // Restore viewport size
-    global.window.innerWidth = 1024;
-    global.window.innerHeight = 768;
+    initializeWorm(container, 3);
+    const segments = container.children;
+    expect(segments.length).toBe(3);
+  });
 });
