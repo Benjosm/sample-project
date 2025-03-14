@@ -1,15 +1,21 @@
 # cli-project/tests/test_cli.py
-import pytest
-from click.testing import CliRunner
+import unittest
+import sys
+import os
+
+# Add the project directory to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from cli.cli import cli
+from click.testing import CliRunner
 
+class TestCLI(unittest.TestCase):
 
-@pytest.fixture
-def runner():
-    return CliRunner()
+    def test_cli(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, ['--help'])
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn('Show this message and exit.', result.output)
 
-
-def test_cli_help(runner):
-    result = runner.invoke(cli, ["--help"])
-    assert result.exit_code == 0
-    assert "Usage: cli" in result.output
+if __name__ == '__main__':
+    unittest.main()
