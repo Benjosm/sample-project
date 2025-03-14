@@ -2,7 +2,7 @@
 import pytest
 import subprocess
 import json
-from cli_project.cli.commands.exec_command import run_command
+from cli.commands.exec_command import run_command
 
 
 @pytest.fixture
