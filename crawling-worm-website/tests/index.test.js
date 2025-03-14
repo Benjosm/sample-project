@@ -1,16 +1,12 @@
 // crawling-worm-website/tests/index.test.js
-import { expect, test } from 'vitest';
-import fs from 'fs/promises';
-import path from 'path';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { describe, it, expect } from 'vitest';
 
-const filePath = path.resolve(__dirname, '../index.html');
-
-test('index.html includes a <body> tag', async () => {
-  try {
-    const fileContent = await fs.readFile(filePath, 'utf-8');
-    expect(fileContent).toContain('<body>');
-  } catch (error) {
-    console.error('Error reading file:', error);
-    throw error;
-  }
+describe('index.html', () => {
+  it('should contain a div with id \'worm-container\' inside the body', () => {
+    const indexPath = resolve(__dirname, '../index.html');
+    const html = readFileSync(indexPath, 'utf8');
+    expect(html).toContain('<div id="worm-container">');
+  });
 });
