@@ -1,34 +1,39 @@
 /* crawling-worm-website/style.css */
 
-.worm-segment {
-  width: 15px;
-  height: 15px;
-  background-color: #4CAF50; /* A nicer green */
-  border-radius: 7.5px; /* Slightly rounded corners */
-  position: absolute;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+/* Default styles (for larger screens) */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  overflow: hidden;
+  background-color: #f0f0f0;
 }
 
-.worm-segment:hover {
-  background-color: #388E3C; /* Darker green on hover */
+canvas {
+  display: block;
+  background-color: #fff;
 }
 
-.worm-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  border: 1px solid #ccc; /* Lighter border */
+/* Media queries for responsiveness */
+
+/* Mobile devices (portrait) */
+@media (max-width: 767px) {
+  /* Adjust styles for smaller screens */
+  /* Example: Reduce worm size, adjust canvas size */
+  canvas {
+    width: 100%;
+    height: auto; /* or a specific height in pixels/vh */
+  }
+  /* Further adjustments for very small screens can go here */
 }
 
-.worm-segment.head {
-  background-color: #2196F3; /* A nice blue */
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+/* Tablets and smaller laptops (landscape) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Adjust styles for medium-sized screens */
+  /* Example: Adjust worm speed, reposition elements */
 }
 
-.worm-segment.tail {
-  background-color: #689F38; /* A lighter green for the tail */
+/* Desktops and larger screens */
+@media (min-width: 1024px) {
+  /* Default styles (already defined) */
+  /* Example: Maintain or increase worm size/speed */
 }
