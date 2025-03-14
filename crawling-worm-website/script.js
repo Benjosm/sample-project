@@ -1,3 +1,7 @@
 // crawling-worm-website/script.js
-console.log("script.js loaded");
-console.log(gsap); // Check if GSAP is accessible
+
+// Select all worm segments
+const wormSegments = document.querySelectorAll('.worm-segment');
+
+// Log the array of segments to the console
+console.log(wormSegments);
