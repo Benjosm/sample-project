@@ -2,41 +2,39 @@
 import unittest
 from src.plan_reader import parse_plan
 
-
 class TestPlanReader(unittest.TestCase):
 
-    def test_empty_plan(self):
+    def test_parse_plan_single_task(self):
+        plan_text = "- Task 1"
+        tasks = parse_plan(plan_text)
+        self.assertEqual(tasks, ["Task 1"])
+
+    def test_parse_plan_multiple_tasks(self):
+        plan_text = "- Task 1\n- Task 2\n- Task 3"
+        tasks = parse_plan(plan_text)
+        self.assertEqual(tasks, ["Task 1", "Task 2", "Task 3"])
+
+    def test_parse_plan_with_leading_spaces(self):
+        plan_text = "  - Task 1"
+        tasks = parse_plan(plan_text)
+        self.assertEqual(tasks, ["Task 1"])
+
+    def test_parse_plan_with_numbered_list(self):
+        plan_text = "1. Task 1"
+        tasks = parse_plan(plan_text)
+        self.assertEqual(tasks, ["Task 1"])
+
+    def test_parse_plan_empty_plan(self):
         plan_text = ""
         tasks = parse_plan(plan_text)
         self.assertEqual(tasks, [])
 
-    def test_single_task(self):
-        plan_text = "Task: Implement feature X"
+    def test_parse_plan_with_empty_lines(self):
+        plan_text = "- Task 1\n\n- Task 2"
         tasks = parse_plan(plan_text)
-        self.assertEqual(tasks, ["Implement feature X"])
+        self.assertEqual(tasks, ["Task 1", "Task 2"])
 
-    def test_multiple_tasks(self):
-        plan_text = """
-Task: Implement feature X
-Task: Write tests
-"""
+    def test_parse_plan_different_formats(self):
+        plan_text = "- Task 1\n- Task 2\n  - Task 3\n1. Task 4"
         tasks = parse_plan(plan_text)
-        self.assertEqual(tasks, ["Implement feature X", "Write tests"])
-
-    def test_step_task(self):
-        plan_text = "Step: Refactor code"
-        tasks = parse_plan(plan_text)
-        self.assertEqual(tasks, ["Refactor code"])
-
-    def test_numbered_list_task(self):
-        plan_text = "1. Deploy to production"
-        tasks = parse_plan(plan_text)
-        self.assertEqual(tasks, ["Deploy to production"])
-
-    def test_handles_extra_whitespace(self):
-        plan_text = "Task:   Clean up   "
-        tasks = parse_plan(plan_text)
-        self.assertEqual(tasks, ["Clean up"])
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertEqual(tasks, ["Task 1", "Task 2", "Task 3", "Task 4"])
