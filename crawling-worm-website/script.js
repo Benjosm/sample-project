@@ -1,25 +1,90 @@
 // crawling-worm-website/script.js
 
-// Select all worm segments
-const wormSegments = document.querySelectorAll('.worm-segment');
+// Define the worm object (assuming this is already defined)
+let worm = {
+    x: 50, // Initial X position
+    y: 50, // Initial Y position
+    direction: 'right', // Initial direction
+    speed: 2, // Movement speed
+    segments: [] // Array to store the segments of the worm's body
+};
 
-// Function to animate a single segment
-function animateSegment(segment, index) {
-  gsap.to(segment, {
-    x: 200, // Move horizontally to the right
-    duration: 1, // Animation duration
-    delay: index * 0.2, // Stagger animation with a delay
-    ease: "power1.inOut", // Easing function
-    onComplete: () => {
-      // Reset position after animation
-      gsap.set(segment, { x: 0 });
-      // Optionally, repeat the animation
-      animateSegment(segment, index);
+// Define the canvas and context (assuming this is already defined)
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Function to update the worm's position and direction
+function update() {
+    // Move the worm based on its current direction
+    switch (worm.direction) {
+        case 'up':
+            worm.y -= worm.speed;
+            break;
+        case 'down':
+            worm.y += worm.speed;
+            break;
+        case 'left':
+            worm.x -= worm.speed;
+            break;
+        case 'right':
+            worm.x += worm.speed;
+            break;
     }
-  });
+
+    // Implement random direction change
+    if (Math.random() < 0.02) { // Adjust the probability for desired frequency
+        const directions = ['up', 'down', 'left', 'right'];
+        worm.direction = directions[Math.floor(Math.random() * directions.length)];
+    }
+
+    // Add the current head position to the segments array
+    worm.segments.unshift({ x: worm.x, y: worm.y });
+
+    // Limit the worm's body length to a certain number of segments
+    if (worm.segments.length > 10) {
+      worm.segments.pop(); // Remove the tail
+    }
+
+
+    // Check for collision with the canvas boundaries
+    if (worm.x < 0) {
+        worm.x = 0;
+        worm.direction = 'right';
+    }
+    if (worm.x > canvas.width) {
+        worm.x = canvas.width;
+        worm.direction = 'left';
+    }
+    if (worm.y < 0) {
+        worm.y = 0;
+        worm.direction = 'down';
+    }
+    if (worm.y > canvas.height) {
+        worm.y = canvas.height;
+        worm.direction = 'up';
+    }
 }
 
-// Animate each segment
-wormSegments.forEach((segment, index) => {
-  animateSegment(segment, index);
-});
+// Function to draw the worm
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'green';
+
+    // Draw the worm's head
+    ctx.fillRect(worm.x, worm.y, 10, 10);
+
+    // Draw the worm's segments (body)
+    for (let i = 0; i < worm.segments.length; i++) {
+        ctx.fillRect(worm.segments[i].x, worm.segments[i].y, 10, 10);
+    }
+}
+
+// Game loop
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+// Start the game loop
+gameLoop();
