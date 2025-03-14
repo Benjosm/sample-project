@@ -1,22 +1,25 @@
 # cli-project/tests/test_exec_command.py
-import json
 import pytest
+from cli.commands.exec_command import exec_command
 from click.testing import CliRunner
-from cli import cli
 
 
 @pytest.fixture
 def runner():
     return CliRunner()
 
-
-def test_exec_command_success(runner):
-    result = runner.invoke(cli, ['exec', 'echo hello'])
+@pytest.mark.parametrize("command, expected_stdout", [
+    ("echo hello", "hello")
+])
+def test_execute_command_success(runner, command, expected_stdout):
+    result = runner.invoke(exec_command, [command])
     assert result.exit_code == 0
-    assert "hello" in result.output
+    assert expected_stdout in result.output
 
-
-def test_exec_command_failure(runner):
-    result = runner.invoke(cli, ['exec', 'invalid_command'])
+@pytest.mark.parametrize("command, expected_stderr", [
+    ("invalid_command", "not found")
+])
+def test_execute_command_failure(runner, command, expected_stderr):
+    result = runner.invoke(exec_command, [command])
     assert result.exit_code != 0
-    assert "No such file or directory" in result.output
+    assert expected_stderr in result.output
