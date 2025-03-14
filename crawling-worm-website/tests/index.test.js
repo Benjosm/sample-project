@@ -1,24 +1,8 @@
 // crawling-worm-website/tests/index.test.js
-import { test, expect } from 'vitest';
-import fs from 'fs/promises';
-import path from 'path';
+import { readFile } from 'node:fs/promises';
+import { expect, test } from 'vitest';
 
-const getFileContent = async (filePath) => {
-  try {
-    const absolutePath = path.resolve(__dirname, '..', filePath);
-    const content = await fs.readFile(absolutePath, 'utf-8');
-    return content;
-  } catch (error) {
-    console.error(`Error reading file ${filePath}:`, error);
-    throw error;
-  }
-};
-
-test('website loads without errors', async () => {
-  try {
-    const html = await getFileContent('index.html');
-    expect(html).toContain('<html');
-  } catch (error) {
-    expect(error).toBeFalsy(); // Ensure the test fails if there's an error
-  }
+test('index.html contains UTF-8 meta tag', async () => {
+  const html = await readFile('crawling-worm-website/index.html', 'utf8');
+  expect(html).toContain('<meta charset="UTF-8">');
 });
