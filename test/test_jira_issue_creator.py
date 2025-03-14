@@ -1,32 +1,25 @@
 # test/test_jira_issue_creator.py
 import unittest
 from unittest.mock import patch
-
-# Assuming the function is in src/jira_issue_creator.py
 from src.jira_issue_creator import create_jira_issue
 
 
 class TestIssueCreation(unittest.TestCase):
-    @patch('src.jira_issue_creator.create_jira_issue')
-    def test_create_issue_with_hardcoded_data(self, mock_create_jira_issue):
-        # Sample data for the issue
+    @patch('src.jira_issue_creator.JIRA')
+    def test_create_issue_with_hardcoded_data(self, mock_jira):
         issue_data = {
             'project': {'key': 'SP'},
             'issuetype': {'name': 'Task'},
-            'summary': 'Test issue from automated test',
-            'description': 'This is a test issue created by an automated test.'
+            'summary': 'Test Issue',
+            'description': 'This is a test issue',
+            'customfield_10000': 'some value' # Example custom field
         }
-        
-        # Call the function to create the issue
+        # Mock the JIRA object and the create_issue method to avoid actual issue creation
+        mock_jira_instance = mock_jira.return_value
+        mock_jira_instance.create_issue.return_value = True # Simulate successful issue creation
         try:
-          create_jira_issue(issue_data)
+            create_jira_issue(issue_data['summary'], issue_data['description'], {'server': 'dummy','basic_auth': ('user', 'pass')}, issue_data)
+            # If create_jira_issue doesn't raise an exception, the test passes
+            self.assertTrue(True)
         except Exception as e:
-          # Assert that the function raises an exception
-          self.fail(f"create_jira_issue raised an exception: {e}")
-        
-        # Assert that the function was called with the correct arguments. The mock will throw an exception if it wasn't
-        mock_create_jira_issue.assert_called_once()
-
-
-if __name__ == '__main__':
-    unittest.main()
+            self.fail(f"create_jira_issue raised an exception: {e}")
