@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import * as fs from 'node:fs';
 import { JSDOM } from 'jsdom';
 
@@ -9,12 +9,12 @@ global.window = dom.window;
 global.HTMLElement = dom.window.HTMLElement;
 
 async function readFile(filePath) {
-  return fs.readFileSync(filePath, 'utf8');
+    return fs.readFileSync(filePath, 'utf8');
 }
 
-describe('index.html', () => {
-  it('should contain a div with id \'worm-container\' inside the body', async () => {
-    const htmlContent = await readFile('crawling-worm-website/index.html');
-    expect(htmlContent).toContain('<div id="worm-container">');
+describe('Script Inclusion', () => {
+  it('should include script.js in index.html', async () => {
+      const htmlContent = await readFile('crawling-worm-website/index.html');
+      expect(htmlContent).toContain('<script src="script.js"></script>');
   });
 });

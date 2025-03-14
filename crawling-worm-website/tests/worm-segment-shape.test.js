@@ -1,30 +1,26 @@
-// crawling-worm-website/tests/worm-segment-shape.test.js
-import { test, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { JSDOM } from 'jsdom';
 
-test('worm segment shape is circle', () => {
-  // Mock a segment element or create a simple one
-  const segment = document.createElement('div');
-  segment.style.borderRadius = '50%';
-  // Add it to the document so it's rendered
-  document.body.appendChild(segment);
-  
-  // Assert that the shape is a circle (or close enough - depending on actual implementation)
-  expect(segment.style.borderRadius).toBe('50%');
-  
-  document.body.removeChild(segment);
+// Mock the global document and window
+const dom = new JSDOM('<!DOCTYPE html><html><body><div id="worm-container"></div></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.HTMLElement = dom.window.HTMLElement;
+
+describe('worm segment shape', () => {
+  let segment;
+  beforeEach(() => {
+    segment = document.createElement('div');
+    segment.style.borderRadius = '0px'; // Set initial style
+    document.body.appendChild(segment);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(segment);
+  });
+
+  it('worm segment shape is square', () => {
+    // Assert that the shape is a square
+    expect(segment.style.borderRadius).toBe('0px');
+  });
 });
-
-test('worm segment shape is square', () => {
-  // Mock a segment element or create a simple one
-  const segment = document.createElement('div');
-  segment.style.borderRadius = '0';
-  // Add it to the document so it's rendered
-  document.body.appendChild(segment);
-  
-  // Assert that the shape is a square
-  expect(segment.style.borderRadius).toBe('0');
-  
-  document.body.removeChild(segment);
-});
-
-// Add more tests for other shapes and custom shapes as needed

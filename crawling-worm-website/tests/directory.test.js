@@ -1,6 +1,5 @@
-// crawling-worm-website/tests/directory.test.js
 import { describe, it, expect } from 'vitest';
-import fs from 'fs';
+import * as fs from 'node:fs';
 
 describe('Project Directory', () => {
   it('should exist at the project root', () => {

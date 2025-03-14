@@ -1,28 +1,27 @@
-import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { JSDOM } from 'jsdom';
 
-// Mock the document for testing purposes
-global.document = {
-  body: {
-    innerHTML: ''
-  }
-};
+// Mock the global document and window
+const dom = new JSDOM('<!DOCTYPE html><html><body><div id="worm-container"></div></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
 
 describe('Worm Segment Count', () => {
+  beforeEach(() => {
+      // Reset the document body for each test
+      document.body.innerHTML = '<div id="worm-container"></div>';
+  });
+
   it('should create the correct number of worm segments', () => {
-    // Assuming the worm length is configurable, let's set it to 5 for this test
     const wormLength = 5;
-
-    // Simulate the HTML structure (simplified for this test)
-    const segmentCount = wormLength;
-    let html = '';
-    for(let i = 0; i < segmentCount; i++) {
-      html += `<div class="worm-segment"></div>`;
+    const container = document.getElementById('worm-container');
+    for (let i = 0; i < wormLength; i++) {
+      const segment = document.createElement('div');
+      segment.className = 'worm-segment';
+      container.appendChild(segment);
     }
-    global.document.body.innerHTML = `<div id="worm-container">${html}</div>`;
 
-    const segments = global.document.body.querySelectorAll('.worm-segment');
+    const segments = container.querySelectorAll('.worm-segment');
     expect(segments.length).toBe(wormLength);
   });
 });
