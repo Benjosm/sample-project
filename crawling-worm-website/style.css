@@ -14,3 +14,14 @@
   height: 300px;
   border: 1px solid black;
 }
+
+.worm-segment.head {
+  background-color: blue; /* Example: Different color for the head */
+  width: 25px; /* Example: Slightly larger size */
+  height: 25px;
+  border-radius: 10px;
+}
+
+.worm-segment.tail {
+  background-color: darkgreen; /* Example: Subtle styling for the tail */
+}
