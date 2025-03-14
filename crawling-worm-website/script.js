@@ -7,7 +7,8 @@ let worm = {
     x: 50, // Initial X position
     y: 50, // Initial Y position
     direction: 'right', // Initial direction
-    speed: 2, // Movement speed (not directly used with GSAP)
+    speed: 150, // Movement speed (pixels per second)
+    segmentSize: 10, // Size of each segment
     segments: [] // Array to store the segments of the worm's body
 };
 
@@ -23,28 +24,28 @@ function update() {
     // Determine target coordinates based on direction
     switch (worm.direction) {
         case 'up':
-            targetY -= 20; // Move 20 pixels in the y-direction
+            targetY -= worm.segmentSize; // Move segmentSize pixels in the y-direction
             break;
         case 'down':
-            targetY += 20; // Move 20 pixels in the y-direction
+            targetY += worm.segmentSize; // Move segmentSize pixels in the y-direction
             break;
         case 'left':
-            targetX -= 20; // Move 20 pixels in the x-direction
+            targetX -= worm.segmentSize; // Move segmentSize pixels in the x-direction
             break;
         case 'right':
-            targetX += 20; // Move 20 pixels in the x-direction
+            targetX += worm.segmentSize; // Move segmentSize pixels in the x-direction
             break;
     }
 
-    // Randomize duration between 0.5 and 1.5 seconds
-    const duration = 0.5 + Math.random() * 1; // Random duration
+    // Calculate duration based on speed
+    const duration = worm.segmentSize / worm.speed; // Duration is proportional to distance and inversely proportional to speed
 
     // Animate the movement using GSAP
     gsap.to(worm, {
         x: targetX,
         y: targetY,
         duration: duration,
-        ease: "power2.inOut", // Experiment with different easing functions
+        ease: "linear", // Changed easing function to linear for potentially better performance
         onComplete: () => {
             // Add the current head position to the segments array after movement
             worm.segments.unshift({ x: worm.x, y: worm.y });
@@ -59,7 +60,7 @@ function update() {
     });
 
     // Implement random direction change after movement
-    if (Math.random() < 0.1) { // Adjust the probability for desired frequency
+    if (Math.random() < 0.05) { // Adjust the probability for desired frequency
         const directions = ['up', 'down', 'left', 'right'];
         worm.direction = directions[Math.floor(Math.random() * directions.length)];
     }
@@ -70,16 +71,16 @@ function checkBoundaryCollisions() {
         worm.x = 0;
         worm.direction = 'right';
     }
-    if (worm.x > canvas.width - 10) {
-        worm.x = canvas.width - 10;
+    if (worm.x > canvas.width - worm.segmentSize) {
+        worm.x = canvas.width - worm.segmentSize;
         worm.direction = 'left';
     }
     if (worm.y < 0) {
         worm.y = 0;
         worm.direction = 'down';
     }
-    if (worm.y > canvas.height - 10) {
-        worm.y = canvas.height - 10;
+    if (worm.y > canvas.height - worm.segmentSize) {
+        worm.y = canvas.height - worm.segmentSize;
         worm.direction = 'up';
     }
 }
@@ -90,20 +91,17 @@ function draw() {
     ctx.fillStyle = 'green';
 
     // Draw the worm's head
-    ctx.fillRect(worm.x, worm.y, 10, 10);
+    ctx.fillRect(worm.x, worm.y, worm.segmentSize, worm.segmentSize);
 
     // Draw the worm's segments (body)
+    ctx.fillStyle = 'lightgreen';
     for (let i = 0; i < worm.segments.length; i++) {
-        ctx.fillRect(worm.segments[i].x, worm.segments[i].y, 10, 10);
+        ctx.fillRect(worm.segments[i].x, worm.segments[i].y, worm.segmentSize, worm.segmentSize);
     }
 }
 
-// Game loop
-function gameLoop() {
+// Use GSAP.ticker for the animation loop
+gsap.ticker.add(() => {
     update();
     draw();
-    requestAnimationFrame(gameLoop);
-}
-
-// Start the game loop
-gameLoop();
+});
