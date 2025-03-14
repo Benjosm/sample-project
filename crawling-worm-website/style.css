@@ -1,1 +1,26 @@
-/* Styles for the website */
+/* crawling-worm-website/style.css */
+
+body {
+  background-color: #f0f0f0;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.worm-segment {
+  width: 20px;
+  height: 20px;
+  background-color: #4CAF50; /* Green */
+  border: 1px solid #000;
+  border-radius: 50%;
+  margin: 2px;
+  display: inline-block;
+}
+
+.worm-container {
+  display: flex;
+  flex-direction: row;
+}
