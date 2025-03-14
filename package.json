@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@vitest/ui": "^3.0.8",
+    "@vitest/utils": "^3.0.8",
+    "jsdom": "^26.0.0",
+    "vitest": "^3.0.8"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/vitest --config vitest.config.js"
+  },
+  "type": "module"
+}
