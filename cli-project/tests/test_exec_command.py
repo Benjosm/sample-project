@@ -1,13 +1,13 @@
 import pytest
-from click.testing import CliRunner
-from cli.cli import cli  # Corrected import
+from cli.cli import cli
+from cli.commands import exec_command
 
 
 @pytest.fixture
-def runner():
-    return CliRunner()
+def mocker():
+    from unittest.mock import Mock
+    return Mock()
 
 
-def test_exec_command(runner):
-    # Add your test cases here
-    pass
+def test_exec_command(mocker):
+    assert exec_command.exec_command is not None
